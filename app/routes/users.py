@@ -21,7 +21,18 @@ async def get_all_users(db: AsyncSession = Depends(get_db)):
         return HTTPException(status_code=204, detail="DataBase is empty")
     return users
 
-@user_router.post("/create_user")
+
+@user_router.get("/id/{user_id}")
+async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db)):
+    response = await db.execute(select(UsersModel).filter_by(id=user_id))
+    user = response.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@user_router.post("/create_user/")
 async def create_user(user: UserAddSchema, db: AsyncSession = Depends(get_db)):
     new_user = UsersModel(name=user.name, description=user.description)
     db.add(new_user)
