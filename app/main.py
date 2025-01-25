@@ -4,11 +4,11 @@ from database import engine
 from routes.users import user_router
 from models.models import Base
 
-app = FastAPI(title="EasyAPI", version="0.1.2")
+app = FastAPI(title="EasyAPI", version="0.1.3")
 app.include_router(user_router)
 
 
-@app.post("/setup_database", tags=["Danger zone 🩸"])
+@app.post("/setup_database", tags=["DataBase 🔐"])
 async def setup_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

@@ -39,3 +39,15 @@ async def create_user(user: UserAddSchema, db: AsyncSession = Depends(get_db)):
     await db.commit()
     await db.refresh(new_user)
     return {"message": "success"}
+
+
+@user_router.delete("/delete_user/")
+async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
+    response = await db.execute(select(UsersModel).filter_by(id=user_id))
+    user = response.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    await db.delete(user)
+    await db.commit()
+    return {"message": "success"}
